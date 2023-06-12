@@ -5,9 +5,7 @@ import { UpdateCoffeeDto } from './dto/update-coffee.dto'
 
 @Controller('coffees')
 export class CoffeesController {
-  constructor(private readonly coffeeService: CoffeesService) {
-
-  }
+  constructor(private readonly coffeeService: CoffeesService) {}
 
   @Get()
   findAll(
