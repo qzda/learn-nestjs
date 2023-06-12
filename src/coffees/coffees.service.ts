@@ -2,24 +2,28 @@ import { Injectable, NotFoundException } from "@nestjs/common"
 import { Coffee } from "./entities/coffee.entity"
 import { CreateCoffeeDto } from "./dto/create-coffee.dto"
 import { UpdateCoffeeDto } from "./dto/update-coffee.dto"
+import { InjectRepository } from "@nestjs/typeorm"
+import { Repository } from "typeorm"
 
 @Injectable()
 export class CoffeesService {
-  private coffees: Coffee[] = [
-    {
-      id     : Date.now(),
-      name   : "n1",
-      brand  : "b1",
-      flavors: ["f1", "f2"],
-    },
-  ]
+  constructor(
+    @InjectRepository(Coffee)
+    private readonly coffeeRepository: Repository<Coffee>,
+  ) {
 
-  findAll() {
-    return this.coffees
   }
 
-  findOne(id: string) {
-    const coffee = this.coffees.find(i => i.id === +id)
+  async findAll() {
+    return this.coffeeRepository.find()
+  }
+
+  async findOne(id: number) {
+    const coffee = await this.coffeeRepository.findOne({
+      where: {
+        id: id,
+      }
+    })
     if (!coffee) {
       throw new NotFoundException(`Coffee #${id} not found`)
     }
@@ -27,36 +31,30 @@ export class CoffeesService {
   }
 
   create(createCoffeeDto: CreateCoffeeDto) {
-    const newCoffee: Coffee = {
-      ...createCoffeeDto,
-      id: Date.now()
-    }
-    this.coffees.push(newCoffee)
+    const newCoffee = this.coffeeRepository.create(createCoffeeDto)
 
-    return newCoffee
+    return this.coffeeRepository.save(newCoffee)
   }
 
-  update(id: string, updateCoffeeDto: UpdateCoffeeDto) {
-    const existingCoffee = this.findOne(id)
-
-    if (!existingCoffee) {
-      throw new NotFoundException(`Coffee #${id} not found`)
-    }
-    this.coffees.forEach((i, index) => {
-      if (i === existingCoffee) {
-        this.coffees[index] = {
-          ...i,
-          ...updateCoffeeDto
-        }
-      }
+  async update(id: number, updateCoffeeDto: UpdateCoffeeDto) {
+    const coffee = await this.coffeeRepository.preload({
+      id: id,
+      ...updateCoffeeDto,
     })
-  }
 
-  remove(id: string) {
-    const coffeeIndex = this.coffees.findIndex(i => i.id === +id)
-    if (coffeeIndex < 0) {
+    if (!coffee) {
       throw new NotFoundException(`Coffee #${id} not found`)
     }
-    this.coffees.splice(coffeeIndex, 1)
+
+    return this.coffeeRepository.save(coffee)
+  }
+
+  async remove(id: number) {
+    const coffee = await this.findOne(id)
+    if (!coffee) {
+      throw new NotFoundException(`Coffee #${id} not found`)
+    }
+
+    return this.coffeeRepository.remove(coffee)
   }
 }
