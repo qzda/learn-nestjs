@@ -6,8 +6,11 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule)
   app.useGlobalPipes(new ValidationPipe({
     whitelist           : true,
-    forbidNonWhitelisted: true,   // 验证器将抛出错误，而不是剥离非白名单属性
-    transform           : true
+    forbidNonWhitelisted: true, // 验证器将抛出错误，而不是剥离非白名单属性
+    transform           : true,
+    transformOptions: {
+      enableImplicitConversion: true
+    }
   }))
 
   await app.listen(3000)

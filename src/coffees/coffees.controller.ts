@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post
 import { CoffeesService } from './coffees.service'
 import { CreateCoffeeDto } from './dto/create-coffee.dto'
 import { UpdateCoffeeDto } from './dto/update-coffee.dto'
+import { PaginationQueryDto } from '../common/dto/pagination-query.dto'
 
 @Controller('coffees')
 export class CoffeesController {
@@ -9,15 +10,11 @@ export class CoffeesController {
 
   @Get()
   findAll(
-    @Query() paginationQuery: {
-      limit : number
-      offset: number
-    }
+    @Query() paginationQuery: PaginationQueryDto
   ) {
-    return this.coffeeService.findAll()
+    console.log(paginationQuery.limit)
 
-    // TODO 分页查询
-    const { limit, offset } = paginationQuery
+    return this.coffeeService.findAll(paginationQuery)
   }
 
   @Get(':id')
