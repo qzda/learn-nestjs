@@ -4,10 +4,10 @@ export class PaginationQueryDto {
   @IsOptional()
   @IsPositive()
   @IsInt()
-  readonly limit: number
+  readonly limit: number;
 
   @IsOptional()
   @IsPositive()
   @IsInt()
-  readonly offset: number
+  readonly offset: number;
 }
