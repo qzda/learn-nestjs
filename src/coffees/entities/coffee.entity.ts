@@ -1,27 +1,29 @@
-import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm"
-import { Flavor } from "./flavor.entity"
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
+import { Flavor } from "./flavor.entity";
 
 @Entity() // sql table default name small case [class name]: 'coffee'
 export class Coffee {
   @PrimaryGeneratedColumn()
-  id: number
+  id: number;
 
   @Column()
-  name: string
+  name: string;
 
   @Column()
-  brand: string
+  brand: string;
 
   @Column({ default: 0 })
-  recommendations: number
+  recommendations: number;
 
   @JoinTable()
-  @ManyToMany(
-    () => Flavor,
-    flavor => flavor.coffees,
-    {
-      cascade: true
-    }
-  )
-  flavors: Flavor[]
+  @ManyToMany(() => Flavor, flavor => flavor.coffees, {
+    cascade: true,
+  })
+  flavors: Flavor[];
 }
