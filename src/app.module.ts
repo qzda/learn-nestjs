@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import { AppService } from "./app.service";
 import { AppController } from "./app.controller";
-import { CoffeesModule } from "./coffees/coffees.module";
+import { CoffeesModule } from "./modules/coffees/coffees.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
 
 @Module({
